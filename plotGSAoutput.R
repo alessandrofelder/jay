@@ -1,28 +1,30 @@
 library(ggplot2)
 
-
 cbbPalette <-
   c("#E69F00",
     "#56B4E9",
     "#009E73",
     "#CC79A7") #subset of colour-blind friendly palette from cookbook-r.com. Order is ocre, light-blue, dark-green, dark-pink. Thanks!
 
-
 setwd("/home/alessandro/Documents/data/Magpie/")
 
-result.variables <-  c("mean.deflection","maximum.deflection","buckling.factor","length","mean.deflection.at.mid.point","deflection.at.mid.point");
+result.variables <-  c("mean.deflection","maximum.deflection","buckling.factor","length","mean.deflection.at.mid.point","deflection.at.mid.point","normalized.mean.deflection","normalized.maximum.deflection");
 
-result.variable.units <- c("[mm]","[mm]","","[m]","[mm]","[mm]")
+result.variable.units <- c("[mm]","[mm]","","[m]","[mm]","[mm]","","")
 naiveResults <- read.csv("naive-space-frame-results.csv")
 naiveResults[,"length"] <- naiveResults[,"length"]/1000;#convert to meters
+naiveResults$normalized.maximum.deflection <- naiveResults[,"maximum.deflection"]/naiveResults[,"length"]
+naiveResults$normalized.mean.deflection <- naiveResults[,"mean.deflection"]/naiveResults[,"length"]
 varying.variables <- c("anisotropy.ratio","size.ratio","align.weight")
-
 
 for(i in 1:length(varying.variables))
 {
   csv.files <- c("varyAnisotropy.csv","varySize.csv","varyAlign.csv")
   GSAresults <- read.csv(csv.files[i])
-  GSAresults[,"length"] <- GSAresults[,"length"]/1000;#convert to meters
+  GSAresults[,"length"] <- GSAresults[,"length"]/1000#convert to meters
+  
+  GSAresults$normalized.maximum.deflection <- GSAresults[,"maximum.deflection"]/GSAresults[,"length"]
+  GSAresults$normalized.mean.deflection <- GSAresults[,"mean.deflection"]/GSAresults[,"length"]
   
   covarIndex1 <- ((i+1) %% length(varying.variables))
   covarIndex2 <- ((i+2) %% length(varying.variables))
@@ -48,7 +50,7 @@ for(i in 1:length(varying.variables))
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
-        legend.key.size = unit(3, 'lines'))+guides(color=guide_legend(override.aes=list(size=3)))
+        legend.key.size = unit(3, 'lines'))+guides(color=guide_legend(override.aes=list(size=4.5)))
     
     studylabels <- c(
       paste0(gsub("\\."," ",varying.variables[covarIndex1])," = ",covar1Max,"\n",gsub("\\."," ",varying.variables[covarIndex2])," = ",covar2Max),
@@ -61,16 +63,12 @@ for(i in 1:length(varying.variables))
     GSAplot <- GSAplot + geom_point(data = study3, aes(x = study3[,varying.variables[i]], y=study3[,result.variables[j]],color=studylabels[3],size=3))
     GSAplot <- GSAplot + geom_point(data = study4, aes(x = study4[,varying.variables[i]], y=study4[,result.variables[j]],color=studylabels[4],size=3))
 
-    GSAplot <- GSAplot + scale_colour_manual(name="parameters", labels = studylabels, values = cbbPalette)+guides(size=FALSE)
+    GSAplot <- GSAplot + scale_colour_manual(name="combination", labels = studylabels, values = cbbPalette)+guides(size=FALSE)
     
     
     if(result.variables[j]!="length")
     {
       GSAplot <- GSAplot + theme(legend.position="none")
-    }
-    else
-    {
-      #GSAplot <- GSAplot + theme(legend.position = "bottom")
     }
     
     if(result.variables[j]!="length" & result.variables[j]!="buckling.factor")
@@ -92,7 +90,7 @@ for(i in 1:length(varying.variables))
         gsub("\\.","-",result.variables[j]),
         ".png"),
         width = 24,
-        height = 14,
+        height = 12,
         units = "cm"
       )
   }
