@@ -62,8 +62,6 @@ for(i in 1:length(varying.variables))
     GSAplot <- GSAplot + geom_point(data = study2, aes(x = study2[,varying.variables[i]], y=study2[,result.variables[j]],color=studylabels[2],size=3))
     GSAplot <- GSAplot + geom_point(data = study3, aes(x = study3[,varying.variables[i]], y=study3[,result.variables[j]],color=studylabels[3],size=3))
     GSAplot <- GSAplot + geom_point(data = study4, aes(x = study4[,varying.variables[i]], y=study4[,result.variables[j]],color=studylabels[4],size=3))
-
-    GSAplot <- GSAplot + scale_colour_manual(name="combination", labels = studylabels, values = cbbPalette)+guides(size=FALSE)
     
     
     if(result.variables[j]!="length")
@@ -83,6 +81,9 @@ for(i in 1:length(varying.variables))
     {
       GSAplot <- GSAplot + scale_x_reverse()
     }
+    GSAplot <- GSAplot + guides(size=FALSE)
+    GSAplot <- GSAplot + scale_colour_manual(name="combination", values = cbbPalette)
+    
     ggsave(
       filename = paste0(
         "plots/magpie-result-",
