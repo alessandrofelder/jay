@@ -13,8 +13,8 @@ result.variables <-  c("mean.deflection","maximum.deflection","buckling.factor",
 result.variable.units <- c("[mm]","[mm]","","[m]","[mm]","[mm]","","")
 naiveResults <- read.csv("naive-space-frame-results.csv")
 naiveResults[,"length"] <- naiveResults[,"length"]/1000;#convert to meters
-naiveResults$normalized.maximum.deflection <- naiveResults[,"maximum.deflection"]/naiveResults[,"length"]*1000
-naiveResults$normalized.mean.deflection <- naiveResults[,"mean.deflection"]/naiveResults[,"length"]*1000
+naiveResults$normalized.maximum.deflection <- naiveResults[,"maximum.deflection"]/(naiveResults[,"length"]*1000)
+naiveResults$normalized.mean.deflection <- naiveResults[,"mean.deflection"]/(naiveResults[,"length"]*1000)
 varying.variables <- c("anisotropy.ratio","size.ratio","align.weight")
 
 for(i in 1:length(varying.variables))
@@ -23,8 +23,8 @@ for(i in 1:length(varying.variables))
   GSAresults <- read.csv(csv.files[i])
   GSAresults[,"length"] <- GSAresults[,"length"]/1000#convert to meters
   
-  GSAresults$normalized.maximum.deflection <- GSAresults[,"maximum.deflection"]/GSAresults[,"length"]*1000
-  GSAresults$normalized.mean.deflection <- GSAresults[,"mean.deflection"]/GSAresults[,"length"]*1000
+  GSAresults$normalized.maximum.deflection <- GSAresults[,"maximum.deflection"]/(GSAresults[,"length"]*1000)
+  GSAresults$normalized.mean.deflection <- GSAresults[,"mean.deflection"]/(GSAresults[,"length"]*1000)
   
   covarIndex1 <- ((i+1) %% length(varying.variables))
   covarIndex2 <- ((i+2) %% length(varying.variables))
